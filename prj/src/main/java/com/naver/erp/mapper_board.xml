@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--***************************************************-->
+<!-- mapper 태그 선언하기 -->
+<!-- mapper 태그 안의 namespace 값은 [원하는 인터페이스 저장 패키지 경로]하고 일치해야한다. -->
+<!--***************************************************-->
+<mapper namespace="com.naver.erp.BoardDAO">
+
+
+	<!--mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm-->
+	<!-- 게시판 글 목록 또는 글 개수 구할 때 사용할 where 절을 sql 태그 안에 선언하기 -->
+	<!--mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm-->
+	<sql id="boardWhere">
+	
+			<!--==============================================================================-->
+			<!-- 만약에 BoardSearchDTO 객체의 멤버변수 keyword1 또는 keyword2 에 데이터가 있으면 -->
+			<!--==============================================================================-->
+			<if test="(keyword1!=null and keyword1.length()>0) or (keyword2!=null and keyword2.length()>0)">
+					and (
+			</if>
+			
+			<!--==============================================================================-->
+			<!-- 만약에 BoardSearchDTO 객체의 멤버변수 keyword1 에 데이터가 있으면 -->
+			<!--==============================================================================-->
+			<if test="keyword1!=null and keyword1.length()>0">
+						(
+							upper(${s_select}) like upper('%${keyword1}%')
+						)
+						<!--=============================================-->
+						<!-- ${keyword1} 의 의미-->
+						<!--=============================================-->
+							<!-- 
+								BoardSearchDTO 객체의 멤버변수 keyword1 안의 데이터를 표현하기.
+								그냥 꺼내서 그대로 표현하기. 문자여도 ' 를 붙이지 않는다.
+								만약에 #{keyword1} 케 표현되면
+									멤버변수 keyword1 안의 데이터가 문자면 문자 앞뒤에 ' 를 자동으로 붙인다.
+							 -->
+						
+			</if>
+			<!--==============================================================================-->
+			<!-- 만약에 BoardSearchDTO 객체의 멤버변수 keyword1 과 keyword2 에 모두 데이터가 있으면 -->
+			<!--==============================================================================-->
+			<if test="(keyword1!=null and keyword1.length()>0) and (keyword2!=null and keyword2.length()>0)">
+				${orand}
+						<!--=============================================-->
+						<!-- ${orand} 의 의미-->
+						<!--=============================================-->
+							<!-- 
+								BoardSearchDTO 객체의 멤버변수 orand 안의 데이터를 표현하기.
+								그냥 꺼내서 그대로 표현하기. 문자여도 ' 를 붙이지 않는다.
+								만약에 #{orand} 케 표현되면
+									멤버변수 orand 안의 데이터가 문자면 문자 앞뒤에 ' 를 자동으로 붙인다.
+							 -->
+			</if>
+			<!--==============================================================================-->
+			<!-- 만약에 BoardSearchDTO 객체의 멤버변수 keyword2 에 데이터가 있으면 -->
+			<!--==============================================================================-->
+			<if test="keyword2!=null and keyword2.length()>0">
+						(
+							upper(subject) like upper('%${keyword2}%')
+							or
+							upper(content) like upper('%${keyword2}%')
+							or
+							upper(writer) like upper('%${keyword2}%')
+						)
+			</if>
+			<!--==============================================================================-->
+			<!-- 만약에 BoardSearchDTO 객체의 멤버변수 keyword1 또는 keyword2 에 데이터가 있으면 -->
+			<!--==============================================================================-->
+			<if test="(keyword1!=null and keyword1.length()>0) or (keyword2!=null and keyword2.length()>0)">
+					)
+			</if>
+			
+			<!--==============================================================================-->
+			<!-- 만약에 BoardSearchDTO 객체의 멤버변수 date 에 데이터가 있으면 -->
+			<!--==============================================================================-->
+			<if test="date!=null">
+				<foreach collection="date"  item="tmp"  open="and (" close=")"  separator=" or ">
+					to_char(
+						sysdate ${tmp}   
+						,'YYYYMMDD'
+					)
+					<![CDATA[
+					<=to_char(reg_date,'YYYYMMDD')
+					]]>
+							<!--==============================================================================-->
+							<!-- ${tmp} 의미 -->
+							<!--==============================================================================-->
+								<!-- 
+									지역변수 tmp 안의 데이터를 표현하기.
+									달러가 앞에 붙으면 문자 건 숫자 건 꺼내서 그대로 표현한다.
+									문자일떄 꺼내서 표현할 때 앞뒤에 ' 를 붙이지 않는다.
+									#{tmp} 을 사용하면 지역변수 tmp 안의 데이터를 표현할 때
+									앞뒤에 ' 가 붙는다.
+									그럼 결국 'or'  또는 'and' 가 표현된다.
+								-->
+				</foreach>
+			</if>
+			
+			
+			
+			
+	</sql>
+	
+	<!--mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm-->
+	<!-- 게시판 모든 행의 개수 구하는 select 문 내포하는 select 태그 선언하기 -->
+	<!--mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm-->
+	<select id="getBoardListCntAll"  resultType="int">
+			select count(*) from board2
+	</select>
+
+	<!--mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm-->
+	<!-- 게시판 검색 결과 개수 구하는 select 문 내포하는 select 태그 선언하기 -->
+	<!--mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm-->
+	<select id="getBoardListCnt"  parameterType="com.naver.erp.BoardSearchDTO" resultType="int">
+			select count(*) from board2 where
+							1=1
+							<!--=============================-->
+							<!--<sql id="boardWhere"> 태그 안에 삽입된 SQL 구문 삽입하기-->
+							<!--=============================-->
+							<include refid="boardWhere"/>
+	</select>
+
+	<!--mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm-->
+	<!-- 게시판 검색 결과(n행m열) 구하는 select 문 내포하는 select 태그 선언하기 -->
+	<!--mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm-->
+	<select id="getBoardList"  parameterType="com.naver.erp.BoardSearchDTO" resultType="java.util.HashMap">
+		 select * from ( select  rownum RNUM, zxcvb.* from  (
+							select  
+								b_no||''                               as "b_no"
+								,subject                               as "subject"
+								,mem_nick                               as "mem_nick"
+								,readcount||''                         as "readcount"
+								,to_char( reg_date,'YYYY-MM-DD')       as "reg_date"
+								<!-- ,to_char( reg_date,'YYYY-MM-DD AM HH:MI:SS' )       as "reg_date" -->
+								,print_level||''                       as "print_level"
+							from 
+								board2
+							where
+							1=1
+							<!--=============================-->
+							<!--<sql id="boardWhere"> 태그 안에 삽입된 SQL 구문 삽입하기-->
+							<!--=============================-->
+							<include refid="boardWhere"/>
+							
+							
+							<!--=============================-->
+							<!--  만약에 BoardSearchDTO 객체의 멤버변수 sort에 데이터가 없으면 -->
+							<!--=============================-->
+							<if test="sort==null or sort.length()==0">
+							order by
+								group_no desc
+								,print_no asc 
+							</if>
+							
+							<!--=============================-->
+							<!--  만약에 BoardSearchDTO 객체의 멤버변수 sort에 데이터가 있으면 -->
+							<!--=============================-->
+							<if test="sort!=null and sort.length()>0">
+								order by ${sort}
+							</if>
+								
+								
+		<![CDATA[
+			) zxcvb) where  RNUM  >= #{begin_rowNo}  and RNUM <= #{end_rowNo}
+		]]>
+	</select>
+	
+		<!-- ==================================================== -->
+		<!-- 조회수 1증가하는 update 문을 내포한 update 태그 선언 -->
+		<!-- ==================================================== -->
+		<update id="updateReadcount" parameterType="int">
+			update
+				board2
+			set
+				readcount = readcount+1
+			where
+				b_no=#{b_no}
+		</update>
+	
+		<!-- ==================================================== -->
+		<!-- 게시판 1개 글 검색하는 select 문을 내포한 select태그 선언 -->
+		<!-- ==================================================== -->
+		<select id="getBoard" parameterType="int" resultType="com.naver.erp.BoardDTO">
+		
+			select
+				b_no 			"b_no"
+				,subject			"subject"
+				,mem_nick			"mem_nick"
+				,reg_date			"reg_date"
+				,readcount			"readcount"
+				,content			"content"
+				,group_no			"group_no"
+				,print_no			"print_no"
+				,print_level		"print_level"
+				,img_name			"img_name"
+			from
+				board2
+			where
+				b_no=#{b_no}
+		</select>
+	
+		<!-- ================================================================ -->
+		<!-- 게시판의 존재 개수를 리턴하는 select를 내포하는 select 태그 선언 -->
+		<!-- ================================================================ -->
+		<select id="getBoardCnt" parameterType="int" resultType="int">
+			select count(*) from board2 where b_no=#{b_no}
+		</select>
+	
+	
+		<!-- ============================================================================= -->
+		<!-- 삭제/수정 할 게시판의 암호 개수를 리턴하는 select를 내포하는 select 태그 선언 -->
+		<!-- ============================================================================= -->
+		<select id="getBoardPwdCnt" parameterType="com.naver.erp.BoardDTO" resultType="int">
+			select count(*) from board2 where mem_nick=#{mem_nick}
+		</select>
+	
+	
+	
+
+	
+		<!-- 게시판 수정하는 update 를 내포하는 update 태그 선언 -->
+   <update id="updateBoard" parameterType="com.naver.erp.BoardDTO">
+      update board2
+      set 
+      	subject = #{subject}
+         , mem_nick =  #{mem_nick}
+         , content =  #{content}
+      
+         <if test="img_name!=null and img_name.length()>0 and isdel==null">
+         , img_name = #{img_name}
+         </if>
+         
+         <if test="img_name==null or isdel!=null and isdel.length()>0">
+         , img_name = null
+         </if>
+         
+         <!-- 만약에 com.naver.erp.BoardDTO 객체의 멤버변수 img_name 에 문자가 있으면 -->
+         <!-- 
+         <if test="img_name!=null and img_name.length()>0">
+         , img_name = #{img_name}
+         </if>
+          -->
+          where
+          b_no = #{b_no}
+          
+           
+   </update>
+
+
+
+
+
+		
+	<!-- ================================================== -->
+	<!-- 자식글의 개수를 검색하는 select 구문을 내포하는 select 태그 선언 -->
+	<!-- ================================================== -->
+	<select id="getBoardChildrenCnt" parameterType="com.naver.erp.BoardDTO" resultType="int">
+		select count(*) from board2
+		where
+			group_no=(select group_no from board2 where b_no=#{b_no})
+		and
+			print_no=(select print_no+1 from board2 where b_no=#{b_no})
+		and
+			print_level=(select print_level+1 from board2 where b_no=#{b_no})
+	</select>
+
+
+	<!-- ================================================== -->
+	<!-- 제목과 내용을 "삭제된 게시글입니다" 라고 수정하는 update 구문을 내포하는 update 태그 선언 -->
+	<!-- ================================================== -->
+	<update id="updateBoardEmpty" parameterType="com.naver.erp.BoardDTO">
+		update
+			board2
+		set 
+			subject = '삭제된 게시물입니다.'
+			,content = '삭제된 게시물입니다.'
+			,img_name = null
+		where
+			b_no=#{b_no}
+	
+	</update>
+	
+	
+	<!-- ================================================== -->
+	<!-- 게시판 삭제하는 delete 구문을 내포하는 delete 태그 선언 -->
+	<!-- ================================================== -->
+	<delete id="deleteBoard" parameterType="com.naver.erp.BoardDTO">
+		delete from board2
+		where
+			b_no=#{b_no}
+	</delete>
+
+
+
+
+	<!-- ================================================== -->
+	<!-- 엄마 글의 자손글 출력 순서번호를 1씩 증가하는 update 구문을 내포하는 update 태그 선언 -->
+	<!-- ================================================== -->
+	<update id="upPrintNo" parameterType="com.naver.erp.BoardDTO">
+		update
+			board2
+		set
+			print_no = print_no+1
+		where
+			group_no = (select group_no from board2 where b_no= #{mom_b_no} )
+			and
+			print_no > (select print_no from board2 where b_no= #{mom_b_no} )
+			
+	</update>
+
+
+
+	<!-- ================================================== -->
+	<!-- 게시판 글 입력하는 insert문을 내포한 insert 태그 선언 -->
+	<!-- ================================================== -->
+	<insert id="insertBoard" parameterType="com.naver.erp.BoardDTO">
+		insert into board2(
+			b_no
+			,subject
+			,mem_nick
+			,readcount
+			,content
+			,group_no
+			,print_no
+			,print_level
+			
+			<if test="img_name!=null and img_name.length()>0" >
+				,img_name
+			</if>
+		
+		) values(
+				(select nvl(max(b_no),0)+1 from board2)
+				,#{subject}
+				,#{mem_nick}
+				,0
+				,#{content}
+				
+				<!-- ================================================== -->
+				<!-- BoardDTO 객체의 멤버변수 mom_b_no에 0이 저장되어있으면 -->
+				<!-- 즉, 새글쓰기라면 -->
+				<!-- ================================================== -->
+				<if test="mom_b_no==0">
+				,(select nvl(max(b_no),0)+1 from board2)
+				,0
+				,0
+				</if>
+				
+				<!-- ================================================== -->
+				<!-- BoardDTO 객체의 멤버변수 mom_b_no에 0보다 큰 숫자가 저장되어있으면 -->
+				<!-- 즉, 답글쓰기라면 -->
+				<!-- ================================================== -->
+				<if test="mom_b_no>0">
+					<!-- 엄마글의 그룹번호를 구하는 서브쿼리 -->
+				,(select group_no 		from board2 where b_no=#{mom_b_no} )
+					<!-- 엄마글의 출력순서번호를 구해 1더하는 서브쿼리 -->
+				,(select print_no+1 	from board2 where b_no=#{mom_b_no} )
+					<!-- 엄마글의 들여쓰기 레벨 번호를 구해서 1더하는 서브쿼리 -->
+				,(select print_level+1  from board2 where b_no=#{mom_b_no} )
+				</if>
+				
+				<if test="img_name!=null and img_name.length()>0" >
+				,#{img_name}
+				</if>
+		
+				
+			
+				<!-- ================================================== -->
+				<!-- BoardDTO 객체의 멤버변수 board_no에 0보다 큰 숫자가 저장되어있으면 -->
+				<!-- 즉, 댓글쓰기라면 -->
+				<!-- ================================================== -->
+					<!-- 
+				<if test="board_no>0">
+					 엄마글의 그룹번호를 구하는 서브쿼리 
+				,(select group_no 		from board where b_no=#{mom_b_no} )
+					 엄마글의 출력순서번호를 구해 1더하는 서브쿼리 
+				,(select print_no+1 	from board where b_no=#{mom_b_no} )
+					 엄마글의 들여쓰기 레벨 번호를 구해서 1더하는 서브쿼리 
+				,(select print_level+1  from board where b_no=#{mom_b_no} )
+				</if>
+				
+				<if test="img_name!=null and img_name.length()>0" >
+				,#{img_name}
+				</if>
+				 -->
+			
+		)
+		</insert>
+		
+		
+		
+		
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</mapper>
+		<!--
+			*****************************************************************
+			<패턴> n행~m행 까지 검색하는 select 패턴 정리1. 제일 빠른 방법 패턴
+			*****************************************************************
+				mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+				select 
+					보고싶은컬러명나열
+				
+				from ( select rownum  "RNUM" ,zxcvb.* from (
+
+					원하는 정렬 select 문 
+
+				) zxcvb where rownum<=마지막행 ) where  rnum>=시작행
+				mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+
+			*****************************************************************
+			<패턴> n행~m행 까지 검색하는 select 패턴 정리2. 2번째 빠른 방법 패턴
+			*****************************************************************
+				mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+				select 
+					보고싶은컬러명나열
+				from ( select rownum  "RNUM" ,zxcvb.* from (
+
+					원하는 정렬 select 문
+
+				) zxcvb ) where rnum>=시작행 and rnum<=마지막행;
+				mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+		-->
+
+
+
+
+

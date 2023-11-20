@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--***************************************************-->
+<!-- mapper 태그 선언하기 -->
+<!-- mapper 태그 안의 namespace 값은 [원하는 인터페이스 저장 패키지 경로]하고 일치해야한다. -->
+<!--***************************************************-->
+<mapper namespace="com.naver.erp.DictionaryDAO">
+
+<sql id="stockWhere">
+		<if test="(keyword!=null and keyword.length()>0)">
+			and(
+			upper(STOCK_DIC_NAME) like upper('%${keyword}%')
+			or 	
+			upper(STOCK_DIC) like upper('%${keyword}%')		
+			)
+		</if>
+	</sql> 
+
+
+	<select id="getStockDictionaryList" resultType="java.util.HashMap">
+	select 
+	STOCK_DIC_NAME	"STOCK_DIC_NAME"
+	,STOCK_DIC		"STOCK_DIC"
+	from 
+	STOCK_DICTIONARY
+	</select>
+	
+	<!--*****************************************************************************-->
+	
+	
+	<select id="getStockDictionaryCntAll"  resultType="int">
+		select count(*)
+		from   STOCK_DICTIONARY
+		
+	</select>
+	
+	<!--*****************************************************************************-->
+	
+	
+	<select id="getStockDictionaryCnt"  parameterType="com.naver.erp.DictionaryDTO" resultType="int">
+		select 
+			count(*) 
+		from 
+			STOCK_DICTIONARY
+		where
+			1=1
+			<include refid="stockWhere"/>
+	
+	</select>
+	
+	<!--*****************************************************************************-->
+   
+   
+	
+	<select id="searchStockDictionary"  parameterType="com.naver.erp.DictionaryDTO" resultType="java.util.HashMap">
+	 select
+		*
+	from(
+		select
+			rownum as "RNUM"
+			, a.*
+		from(
+	select 
+	STOCK_DIC_NAME    "STOCK_DIC_NAME"
+    ,STOCK_DIC        "STOCK_DIC"
+    from 
+    STOCK_DICTIONARY
+    where 1=1  <include refid="stockWhere"/>
+   order by STOCK_DIC_NAME
+     <![CDATA[   
+         ) a) where RNUM >= #{begin_rowNo} and RNUM <= #{end_rowNo}
+         ]]>
+    
+   
+			
+	
+	</select>
+   
+   
+      <!-- 
+         ~~~~~~~~~~~~~~~~~~~~~~
+         <select ~> 태그 안의 속성
+         ~~~~~~~~~~~~~~~~~~~~~~
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            id="namespace값 마지막의 인터페이스 내부의 메소드명중 하나"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            parameterType="SQL구문에 참여하는 외부 데이터의 타입"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+               만약 외부의 데이터 타입이 HashMap일 경우
+                     "java.util.HashMap"  또는  "hashmap"을 쓴다.
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      
+            reusultType = "SQL구문의 결과값을 저장할 수 있는 자바 자료형"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
+            
+            
+         ~~~~~~~~~~~~~~~~~~~~~~
+         #{mid}
+         ~~~~~~~~~~~~~~~~~~~~~~
+            mid는 현재 참여하고 있는 HashMap객체의 키값을 의미한다.
+            {mid} 는 "mid" 라는 키값에 대응하는 데이터를 리턴하라는 의미
+            #     는 리턴하는 데이터가
+                  문자면 앞뒤에 ' 를 붙이고
+                  숫자면 앞뒤에 아무것도 붙이지 말라는 뜻.
+         ~~~~~~~~~~~~~~~~~~~~~~
+         #{pwd}
+         ~~~~~~~~~~~~~~~~~~~~~~   
+            pwd는 현재 참여하고 있는 HashMap객체의 키값을 의미한다.
+            {pwd} 는 "mid" 라는 키값에 대응하는 데이터를 리턴하라는 의미
+            #     는 리턴하는 데이터가
+                  문자면 앞뒤에 ' 를 붙이고
+                  숫자면 앞뒤에 아무것도 붙이지 말라는 뜻.
+       -->
+   
+   
+
+</mapper>
+
+
+
+
+
+

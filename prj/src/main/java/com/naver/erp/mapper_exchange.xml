@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--***************************************************-->
+<!-- mapper 태그 선언하기 -->
+<!-- mapper 태그 안의 namespace 값은 [원하는 인터페이스 저장 패키지 경로]하고 일치해야한다. -->
+<!--***************************************************-->
+<mapper namespace="com.naver.erp.ExchangeDAO">
+	
+
+	
+	<select id="getExchangeUSDList" resultType="java.util.HashMap">
+	
+         
+         select 
+         to_char(REG_DATE,'yyyy-mm-dd')		"REG_DATE"
+			,USD			"USD"
+         
+          from EXCHANGE_RATE
+          
+        </select>  
+	
+	
+	<select id="getWeekUSDList" resultType="java.util.HashMap">
+	
+      select 
+         to_char(REG_DATE,'yyyy-mm-dd')        "REG_DATE"
+            ,USD            "USD"
+         
+  from EXCHANGE_RATE 
+  where   to_char(REG_DATE,'yyyy-mm-dd') between '2023-08-24' and '2023-08-31'
+          
+        </select>  
+	
+	
+	<select id="getMonthUSDList" resultType="java.util.HashMap">
+	
+         
+        
+      select 
+         to_char(REG_DATE,'yyyy-mm-dd')        "REG_DATE"
+            ,USD            "USD"
+         
+  from EXCHANGE_RATE 
+  where   to_char(REG_DATE,'yyyy-mm-dd') between '2023-07-24' and '2023-08-31'
+          
+        </select>  
+	
+	
+	<select id="getYearUSDList" resultType="java.util.HashMap">
+	
+         
+      select 
+         to_char(REG_DATE,'yyyy-mm-dd')        "REG_DATE"
+            ,USD            "USD"
+         
+  from EXCHANGE_RATE 
+  where   to_char(REG_DATE,'yyyy-mm-dd') between '2022-09-24' and '2023-08-31'
+        </select>  
+	
+<select id="getExchangeDescList" resultType="java.util.HashMap">
+	
+         
+        
+ select 
+         to_char(REG_DATE,'yyyy-mm-dd')        "REG_DATE"
+            ,USD            "USD"
+         
+  from EXCHANGE_RATE    
+  order by reg_date desc
+ </select>  
+		
+	
+	
+
+</mapper>
+
+
+
+
+
+
+

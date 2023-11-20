@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--***************************************************-->
+<!-- mapper 태그 선언하기 -->
+<!-- mapper 태그 안의 namespace 값은 [원하는 인터페이스 저장 패키지 경로]하고 일치해야한다. -->
+<!--***************************************************-->
+<mapper namespace="com.naver.erp.JoinDAO">
+
+
+
+
+   <!-- ================================================== -->
+   <!-- 회원가입 insert문을 내포한 insert 태그 선언 -->
+   <!-- ================================================== -->
+   <insert id="insertJoin" parameterType="com.naver.erp.JoinDTO" >
+   insert into member2(
+         mem_no          
+         ,mem_nick
+         ,mem_id
+         ,mem_pwd
+         ,mem_name
+         ,mem_gender
+         ,mem_birth
+         ,mem_email
+
+      ) values(
+            (select nvl(max(mem_no),0)+1 from member2)
+            ,#{mem_nick}
+            ,#{mem_id}
+            ,#{mem_pwd}
+            ,#{mem_name}
+            ,#{mem_gender}
+            ,#{mem_birth}
+            ,#{mem_email}
+      )
+   </insert>
+   
+   
+   
+         <!--  수정하는 update 를 내포하는 update 태그 선언 -->
+   <update id="updateJoin" parameterType="com.naver.erp.JoinDTO">
+      update member2
+      set 
+      mem_pwd =  #{mem_pwd}
+      ,mem_email = #{mem_email}
+       where
+        mem_id = #{mem_id}
+   </update>
+   
+   
+   
+   
+   
+      
+   
+   <!-- 0이면 사용가능 0이상 사용불가 라는 뜻 -->
+   <select id="checkNickDuplication" parameterType="String" resultType="int">
+      SELECT    COUNT(*)
+      FROM   member2
+      WHERE   mem_nick = #{mem_nick}
+      
+   </select>
+      
+   <select id="checkIdDuplication" parameterType="String" resultType="int">
+      SELECT    COUNT(*)
+      FROM   member2
+      WHERE   mem_id = #{mem_id}
+   </select>
+      
+      
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</mapper>
+      <!--
+         *****************************************************************
+         <패턴> n행~m행 까지 검색하는 select 패턴 정리1. 제일 빠른 방법 패턴
+         *****************************************************************
+            mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+            select 
+               보고싶은컬러명나열
+            
+            from ( select rownum  "RNUM" ,zxcvb.* from (
+
+               원하는 정렬 select 문 
+
+            ) zxcvb where rownum<=마지막행 ) where  rnum>=시작행
+            mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+
+         *****************************************************************
+         <패턴> n행~m행 까지 검색하는 select 패턴 정리2. 2번째 빠른 방법 패턴
+         *****************************************************************
+            mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+            select 
+               보고싶은컬러명나열
+            from ( select rownum  "RNUM" ,zxcvb.* from (
+
+               원하는 정렬 select 문
+
+            ) zxcvb ) where rnum>=시작행 and rnum<=마지막행;
+            mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+      -->
+
+
+

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--***************************************************-->
+<!-- mapper 태그 선언하기 -->
+<!-- mapper 태그 안의 namespace 값은 [원하는 인터페이스 저장 패키지 경로]하고 일치해야한다. -->
+<!--***************************************************-->
+<mapper namespace="com.naver.erp.KospiDaqDAO">
+	
+
+	
+	<select id="getKospiList" resultType="java.util.HashMap">
+			select
+				k_no||''								as "k_no"
+				,subject								as "subject"
+				,to_char(reg_date,'yyyy-mm-dd')		 	as "reg_date"
+				,previous_close||''						as "previous_close"
+				,high||''						 		as "high"
+				,low||''								as "low"
+				,fiftyfive_wk_high||''					as "fiftyfive_wk_high"
+				,fiftyfive_wk_low||''				   	as "fiftyfive_wk_low"
+				
+			from
+				kospi
+			where
+				to_char(reg_date,'dd')='01'
+				or
+				to_char(reg_date,'dd')='15'		
+			order by
+				k_no desc
+	
+	</select>
+	
+	<select id="getKosdaqList" resultType="java.util.HashMap">
+			select
+				k_no||''								as "k_no"
+				,subject								as "subject"
+				,to_char(reg_date,'yyyy-mm-dd')		 	as "reg_date"
+				,previous_close||''						as "previous_close"
+				,high||''						 		as "high"
+				,low||''								as "low"
+				,fiftyfive_wk_high||''					as "fiftyfive_wk_high"
+				,fiftyfive_wk_low||''				   	as "fiftyfive_wk_low"
+				
+			from
+				kosdaq
+			where
+				to_char(reg_date,'dd')='01'
+				or
+				to_char(reg_date,'dd')='15'		
+			order by
+				k_no desc
+	
+	</select>
+	
+	<select id="getKospiListDesc" resultType="java.util.HashMap">
+			select
+				k_no||''								as "k_no"
+				,subject								as "subject"
+				,to_char(reg_date,'yyyy-mm-dd')		 	as "reg_date"
+				,previous_close||''						as "previous_close"
+				,high||''						 		as "high"
+				,low||''								as "low"
+				,fiftyfive_wk_high||''					as "fiftyfive_wk_high"
+				,fiftyfive_wk_low||''				   	as "fiftyfive_wk_low"
+				
+			from
+				kospi
+			
+			order by
+				reg_date desc
+	
+	</select>
+	
+	<select id="getKosdaqListDesc" resultType="java.util.HashMap">
+			select
+				k_no||''								as "k_no"
+				,subject								as "subject"
+				,to_char(reg_date,'yyyy-mm-dd')		 	as "reg_date"
+				,previous_close||''						as "previous_close"
+				,high||''						 		as "high"
+				,low||''								as "low"
+				,fiftyfive_wk_high||''					as "fiftyfive_wk_high"
+				,fiftyfive_wk_low||''				   	as "fiftyfive_wk_low"
+				
+			from
+				kosdaq
+			
+			order by
+				reg_date desc
+	
+	</select>
+
+	
+	
+
+</mapper>
+
+
+
+
+
+
+

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--***************************************************-->
+<!-- mapper 태그 선언하기 -->
+<!-- mapper 태그 안의 namespace 값은 [원하는 인터페이스 저장 패키지 경로]하고 일치해야한다. -->
+<!--***************************************************-->
+<mapper namespace="com.naver.erp.ArticleDAO">
+
+	<sql id="articleWhere">
+		<if test="(keyword!=null and keyword.length()>0)">
+			and(
+			upper(title) like upper('%${keyword}%')			
+			)
+		</if>
+	</sql> 
+  
+	<select id="getArticleCntAll" resultType="int">
+		select count(*) from article
+	</select>
+	
+	<select id="getArticleCnt" parameterType="com.naver.erp.ArticleDTO" resultType="int">
+		select 
+			count(*) 
+		from 
+			article
+		where
+			1=1
+			<include refid="articleWhere"/>
+	</select>
+   
+	<!-- 로그인 아이디와 암호의 존재의 개수를 검색하는 -->
+	<!-- select구문을 내포한 <select> 태그 선언하기 -->
+	<select id="getArticleList" resultType="java.util.HashMap">
+	select
+		article_no||''						as "article_no"	
+		, title								as "title"
+		, to_char(reg_date,'yyyy-mm-dd')	as "reg_date"
+		, link								as "link"
+		 ,readcount							as "readcount"
+	from
+		article
+	order by
+		reg_date desc
+	</select>
+	
+	<select id="searchArticleList" parameterType="com.naver.erp.ArticleDTO" resultType="java.util.HashMap">
+	select
+		*
+	from(
+		select
+			rownum as "RNUM"
+			, a.*
+		from(
+			select
+				article_no||''						as "article_no" 		
+				, title								as "title"
+		        , to_char(reg_date, 'yyyy-mm-dd')	as "reg_date" 
+		        , link								as "link"
+		        ,readcount							as "readcount"
+			from
+				article
+			where
+	      	1=1
+	      	<include refid="articleWhere"/>
+	      	order by
+	      		reg_date desc
+         <![CDATA[   
+         ) a) where RNUM >= #{begin_rowNo} and RNUM <= #{end_rowNo}
+         ]]>
+	</select>
+   
+ 
+   
+	<update id="updateReadcount" parameterType="String">
+		update
+			article
+		set
+			readcount=readcount+1
+		where
+			title=#{title}
+	</update>
+	
+	<select id="getTopArticleList" resultType="java.util.HashMap">
+	select
+		article_no||''						as "article_no"	
+		, title								as "title"
+		, to_char(reg_date,'yyyy-mm-dd')	as "reg_date"
+		, link								as "link"
+		 ,readcount							as "readcount"
+	from
+		article
+	order by
+		readcount desc
+	</select>
+	
+	<select id="getArticleKeywordList" parameterType="com.naver.erp.GraphDTO" resultType="java.util.HashMap">
+   
+	select
+		      article_no  as "article_no"
+		      , title       as "title"
+		      , to_char(reg_date,'yy-mm-dd')    as "reg_date"
+		      , link       as "link"
+		      
+	   from  
+	  		article  
+	   where      
+	        UPPER(title) like UPPER('%${keyword}%')
+
+
+   </select>
+
+</mapper>
+
+
+
+
+
+

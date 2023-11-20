@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--***************************************************-->
+<!-- mapper 태그 선언하기 -->
+<!-- mapper 태그 안의 namespace 값은 [원하는 인터페이스 저장 패키지 경로]하고 일치해야한다. -->
+<!--***************************************************-->
+<mapper namespace="com.naver.erp.StockDAO">
+	
+	<!-- 로그인 아이디와 암호의 존재의 개수를 검색하는 -->
+	<!-- select구문을 내포한 <select> 태그 선언하기 -->
+	<select id="getWeekStockList" resultType="java.util.HashMap">
+              
+			select
+			    s1.stk_cd		as "stk_cd"
+			    , s1.stk_nm		as "stk_nm"
+			    , s1.c_prc		as "c_prc"
+			    , s1.h_prc		as "h_prc"
+			    , s1.l_prc		as "l_prc"
+			    , s1.market		as "market"
+			    , s1.reg_date	as "reg_date"
+			    
+			    , round(s1.c_prc /
+			          (select 
+			              s2.c_prc 
+			          from 
+			              week_stock s2 
+			          where 
+			              to_char(s2.reg_date,'yyyymmdd') = (select to_char(max(reg_date)-1,'yyyymmdd') from week_stock)
+			              and
+			              s1.stk_cd = s2.stk_cd)  * 100 -100 ,2)   as "rate"
+			              
+			    , s1.net_change 		as "net_change"
+			    , s1.stock_amount		as "stock_amount" 	
+			   	, s1.market_capital		as "market_capital"
+			   	
+			   	
+			from
+			    week_stock s1
+			where
+			    to_char(s1.reg_date,'yyyymmdd') = (select to_char(max(reg_date),'yyyymmdd') from week_stock)
+			            
+			order by
+			    
+			    "rate" desc
+            
+	
+	
+	</select>
+		<select id="getWeekStockRateAscList" resultType="java.util.HashMap">
+              
+			select
+			    s1.stk_cd		as "stk_cd"
+			    , s1.stk_nm		as "stk_nm"
+			    , s1.c_prc		as "c_prc"
+			    , s1.h_prc		as "h_prc"
+			    , s1.l_prc		as "l_prc"
+			    , s1.market		as "market"
+			    , s1.reg_date	as "reg_date"
+			    , round(s1.c_prc /
+			          (select 
+			              s2.c_prc 
+			          from 
+			              week_stock s2 
+			          where 
+			              to_char(s2.reg_date,'yyyymmdd') = (select to_char(max(reg_date)-1,'yyyymmdd') from week_stock)
+			              and
+			              s1.stk_cd = s2.stk_cd)  * 100 -100 ,2)   as "rate"
+			    , s1.net_change 		as "net_change"
+			    , s1.stock_amount		as "stock_amount" 	
+			   	, s1.market_capital		as "market_capital"
+			from
+			    week_stock s1
+			where
+			    to_char(s1.reg_date,'yyyymmdd') = (select to_char(max(reg_date),'yyyymmdd') from week_stock)
+			            
+			order by
+			    
+			    "rate" asc
+            
+	
+	
+	</select>
+	
+		<select id="getWeekMarketDescList" resultType="java.util.HashMap">
+              
+			select
+			    s1.stk_cd		as "stk_cd"
+			    , s1.stk_nm		as "stk_nm"
+			    , s1.c_prc		as "c_prc"
+			    , s1.h_prc		as "h_prc"
+			    , s1.l_prc		as "l_prc"
+			    , s1.market		as "market"
+			    , s1.reg_date	as "reg_date"
+			    , round(s1.c_prc /
+			          (select 
+			              s2.c_prc 
+			          from 
+			              week_stock s2 
+			          where 
+			              to_char(s2.reg_date,'yyyymmdd') = (select to_char(max(reg_date)-1,'yyyymmdd') from week_stock)
+			              and
+			              s1.stk_cd = s2.stk_cd)  * 100 -100 ,2)   as "rate"
+			    , s1.net_change 		as "net_change"
+			    , s1.stock_amount		as "stock_amount" 	
+			   	, s1.market_capital		as "market_capital"
+			from
+			    week_stock s1
+			where
+			    to_char(s1.reg_date,'yyyymmdd') = (select to_char(max(reg_date),'yyyymmdd') from week_stock)
+			            
+			order by
+			    
+			    "market" desc
+		</select>  
+			    
+	<select id="getWeekMarketAmountDescList" resultType="java.util.HashMap">
+              
+			select
+			    s1.stk_cd		as "stk_cd"
+			    , s1.stk_nm		as "stk_nm"
+			    , s1.c_prc		as "c_prc"
+			    , s1.h_prc		as "h_prc"
+			    , s1.l_prc		as "l_prc"
+			    , s1.market		as "market"
+			    , s1.reg_date	as "reg_date"
+			    , s1.f_rate     as "rate"
+			    , s1.net_change 		as "net_change"
+			    , s1.stock_amount		as "stock_amount" 	
+			   	, s1.market_capital		as "market_capital"
+			    
+			from
+			    week_stock s1
+			where
+			    to_char(s1.reg_date,'yyyymmdd') = (select to_char(max(reg_date),'yyyymmdd') from week_stock)
+			            
+			order by
+			    
+			    "stock_amount" desc 
+	
+	
+	</select>
+
+	<select id="getWeekAllStockList" resultType="java.util.HashMap"> <!-- 여기서 이미 차례로 넣어서 따로 날짜를 매칭할 필요가 없다. -->
+              
+			select
+			    s1.stk_cd		as "stk_cd"
+			    , s1.stk_nm		as "stk_nm"
+			    , s1.c_prc		as "c_prc"
+			    , s1.h_prc		as "h_prc"
+			    , s1.l_prc		as "l_prc"
+			    , s1.o_prc		as "o_prc"
+			    , s1.market		as "market"
+			    , s1.reg_date	as "reg_date"
+			   
+			    , s1.net_change 		as "net_change"
+			    , s1.stock_amount		as "stock_amount" 	
+			   	, s1.market_capital		as "market_capital"
+			    
+			from
+			    week_stock s1
+			
+			            
+			order by
+			    
+			    "reg_date" desc 
+	
+	
+	</select>
+
+	<select id="getMonthAllStockList" resultType="java.util.HashMap"> <!-- 여기서 이미 차례로 넣어서 따로 날짜를 매칭할 필요가 없다. -->
+              
+			select
+			    s1.stk_cd		as "stk_cd"
+			    , s1.stk_nm		as "stk_nm"
+			    , s1.c_prc		as "c_prc"
+			    , s1.h_prc		as "h_prc"
+			    , s1.l_prc		as "l_prc"
+			    , s1.o_prc		as "o_prc"
+			    , s1.market		as "market"
+			    , s1.reg_date	as "reg_date"
+			   
+			    , s1.net_change 		as "net_change"
+			    , s1.stock_amount		as "stock_amount" 	
+			   	, s1.market_capital		as "market_capital"
+			    
+			from
+			    month_stock s1
+			
+			            
+			order by
+			    
+			    "reg_date" desc 
+	
+	
+	</select>
+	<select id="getYearAllStockList" resultType="java.util.HashMap"> <!-- 여기서 이미 차례로 넣어서 따로 날짜를 매칭할 필요가 없다. -->
+              
+			select
+			    s1.stk_cd		as "stk_cd"
+			    , s1.stk_nm		as "stk_nm"
+			    , s1.c_prc		as "c_prc"
+			    , s1.h_prc		as "h_prc"
+			    , s1.l_prc		as "l_prc"
+			    , s1.o_prc		as "o_prc"
+			    , s1.market		as "market"
+			    , s1.reg_date	as "reg_date"
+			   
+			    , s1.net_change 		as "net_change"
+			    , s1.stock_amount		as "stock_amount" 	
+			   	, s1.market_capital		as "market_capital"
+			    
+			from
+			    year_stock s1
+			
+			            
+			order by
+			    
+			    "reg_date" desc 
+	
+	
+	</select>
+
+
+
+
+	<insert id="insertRecentPickStock" parameterType="com.naver.erp.StockDTO">
+		insert into recent_stock_pick(
+			recentPickStk_cd
+			,recentPickStk_nm
+			,recentPickNet_change
+						
+		
+		
+		)values(
+			#{recentPickStk_cd}
+			,#{recentPickStk_nm}
+			,#{recentPickNet_change}
+		)
+	
+	</insert>
+	
+	<select id="getRecentPickStockList" resultType="java.util.HashMap">
+              
+			select
+			    recentPickStk_cd			as "recentPickStk_cd"
+			    , recentPickStk_nm			as "recentPickStk_nm"
+			    , recentPickNet_change		as "recentPickNet_change"
+			    ,recent_reg_date			as "recent_reg_date"
+			from
+			    recent_stock_pick
+			order by 
+				recent_reg_date asc
+	
+	
+	</select>
+
+	<delete id="deleteRecentPickStock" parameterType="com.naver.erp.StockDTO">
+              
+			delete from recent_stock_pick
+			where recentPickStk_nm=#{recentPickStk_nm}
+				
+
+	
+	
+	</delete>
+	
+	<delete id="minusPick" parameterType="com.naver.erp.StockDTO">
+              
+			delete from recent_stock_pick
+			where recentPickStk_nm=#{deleteName}
+				
+
+	
+	
+	</delete>
+		
+	<select id="getAllStockCdAndNm" resultType="java.util.HashMap">
+              
+			select
+			    stk_cd||''		as "stk_cd"
+			    ,stk_nm 	as "stk_nm"
+			from
+			    stk_code
+
+	
+	</select>
+
+
+
+	<select id="getSeveral_rate" resultType="java.util.HashMap">
+              
+			select
+				stk_nm					as"stk_nm"
+				,sales					as"sales"
+				,business_profit		as"business_profit"
+				,pre_tax_profit			as"pre_tax_profit"
+				,net_profit				as"net_profit"
+				,sales_rate				as"sales_rate"
+				,business_profit_rate	as"business_profit_rate"
+				,eitda_rate				as"eitda_rate"
+				,net_profit_rate		as"net_profit_rate"
+				,debt_rate				as"debt_rate"
+			    
+			from
+			    several_rate
+
+	
+	</select>
+
+	<select id="getFinancial_statements" resultType="java.util.HashMap">
+              
+			select
+				STK_CD                 			as "stk_cd"             
+			    , STK_NM                        as "stk_nm"    
+			    , SALES                         as "sales"    
+			    , SALES_COST                    as "sales_cost"    
+			    , MARGIN                        as "margin"    
+			    , SELL_ADMIN_COST               as "sell_admin_cost"    
+			    , BUSINESS_PROFIT               as "business_profit"    
+			    , BUSINESS_PROFIT_OFFICIAL      as "business_profit_official"    
+			    , FINANCIAL_RETURNS             as "financial_returns"    
+			    , FINANCIAL_COST                as "financial_cost"    
+			    , OTHER_REVENUES                as "other_revenues"   
+			    , OHTER_EXPENSES                as "ohter_expenses"    
+			    , CONTROL_FIRMS_PROFIT          as "control_firms_profit"    
+			    , PRE_TAX_CON_BUSINESS_PROFIT   as "pre_tax_con_business_profit"         
+			    , CORPORATE_TAX                 as "corporate_tax"                                          
+			    , CON_OPERATING_PROFIT          as "con_operating_profit"    
+			    , INTERRUPTED_ORERATION_PROFIT as "interrupted_oreration_profit"    
+			    , NET_INCOME                    as "net_income"    
+			    , CONTROL_INCOME                as "control_income"    
+			    , NON_CONTROL_INCOME            as "non_control_income"    
+			
+			    
+			from
+			    FINANCIAL_STATEMENTS
+
+	
+	</select>
+
+
+
+</mapper>
+
+
+
+
+
+
+

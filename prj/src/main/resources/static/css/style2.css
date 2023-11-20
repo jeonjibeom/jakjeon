@@ -1,0 +1,150 @@
+
+<!-- CSS설정하기 -->
+
+
+	/****************************************/
+	/* body 태그 안의 모든 태그를 15px로 하기 */
+	/****************************************/
+	body *{
+		font-size:15px;
+	}
+	
+	
+	
+
+	
+	/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
+	/*
+	table태그의 경계선을 단일선으로 하기
+	th태그안의 배경색을 lightgray로하기
+	th, td 태그안의 여백을 7px로 하기
+	*/
+	/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
+	table{
+		border-collapse:collapse;
+	}
+	th{
+		background-color:lightgray
+	}
+	th, td{
+	padding:7px 13px 7px 13px
+	
+	}
+	
+	/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
+	/*
+	class=tableA11 을 가진 table태그와 그 안의 th,td의
+	경계선 두께/모양/색상 설정하기
+	*/
+	/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
+	
+	.tableA11, .tableA11 th, .tableA11 td{
+		border:1px solid gray;
+		spacing:0;
+	}
+	
+	/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
+	/*
+	class=tableA10 을 가진 table태그와 그 안의 th,td의
+	경계선 두께/모양/색상 설정하기
+	*/
+	/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
+	
+	.tableA10, .tableA10 th, .tableA10 td{
+		border-top:1px solid gray;
+		border-bottom:1px solid gray;
+		border-left:0px solid gray;
+		border-right:0px solid gray;
+		spacing:0;
+	}
+	
+	/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
+	/*
+	class=tableA00 을 가진 table태그와 그 안의 th,td의
+	경계선 두께/모양/색상 설정하기
+	*/
+	/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
+	
+	.tableA00, .tableA00 th, .tableA00 td{
+		border:0px solid gray;
+		spacing:0;
+	}
+	
+	
+	/****************************************/
+	/* 
+	class=tableA00,class=tableA10,class=tableA11 가진 태그 안의
+		tr 중에 2n+3번째 tr의 배경색을 #f6f6f6로 하기
+		이때 n은 0시작해서 1씩 증가.
+	
+	 */
+	/****************************************/
+	.tableA00 tr:nth-child(2n+3)
+	,.tableA10 tr:nth-child(2n+3)
+	,.tableA11 tr:nth-child(2n+3)
+	{
+		background-color:#f6f6f6;	
+	}
+	
+	
+	/****************************************/
+	/* 
+	class=tableB 가진 table태그와 그 안의 th,td
+	경계선 두께 모양 색상 설정하기	
+	 */
+	/****************************************/
+	.tableB, .tableB th, .tableB td{
+		border:1px solid gray;
+		spacing:0;
+	}
+	
+	
+/*mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+	
+
+								
+										<아래부터는 전지범이 만든 스타일 태그>
+
+
+
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm*/
+header {
+	  position: fixed;
+	  top: 0;
+	  left: 0;
+	  right: 0;
+	  
+	  height: 75px;
+	  padding: 1rem;
+	  color: white;
+	  background: teal;
+	  font-weight: bold;
+	  display: flex;
+	  justify-content: space-between;
+	  align-items: center;
+}
+h1, p {
+  margin: 0;
+}
+
+main {
+  padding: 1rem;
+  height: 100%;  
+}
+body {
+  background: #EEE;
+}
+
+body, html {
+  height: 200%;
+}
+
+* {
+  box-sizing: border-box;
+}
+	
+body {
+  padding-top: 75px;
+  /* 생략 */
+}
+
