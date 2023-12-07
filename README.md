@@ -27,7 +27,7 @@
 ```
 ## III. 적용기술/개발환경
 ```
-
+https://github.com/jeonjibeom/jakjeon/issues/1#issue-2030450817
 
 ```
 ## IIII. 개발 환경
