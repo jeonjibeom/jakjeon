@@ -25,6 +25,11 @@
 - 게시판과 댓글 기능
 
 ```
+## 역할
+![역할분배1](https://github.com/jeonjibeom/jakjeon/assets/93521256/6b18afd8-9629-470b-a6ad-3402507ef89f)
+![역할분배2](https://github.com/jeonjibeom/jakjeon/assets/93521256/04eb685e-002d-4697-aad8-f51cc0eef116)
+
+
 ## III. 적용기술/개발환경
 
 ![적용 기술 ,개발환경](https://github.com/jeonjibeom/jakjeon/assets/93521256/a38e4383-3204-4303-b1c4-f849b8f013a3)
